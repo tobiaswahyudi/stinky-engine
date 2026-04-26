@@ -1,20 +1,28 @@
-const DEFAULT_DRAW_PARAMS = {
-  fill: "#fff",
-  stroke: "#000",
-  strokeWidth: 0,
-};
+/**
+ *  config: {
+ *    width: 1280,
+ *    height: 720
+ *  }
+ */
 
 class CanvasManager {
-  constructor(assets) {
+  constructor(config, assetLoader) {
     this.canvas = document.getElementById("gameCanvas");
     this.ctx = this.canvas.getContext("2d");
-    this.assets = assets;
+
+    // Canvas dimensions
+    this.width = GAME_WIDTH;
+    this.height = GAME_HEIGHT;
+    // Set canvas size
+    this.canvas.width = this.width;
+    this.canvas.height = this.height;
+
+    this.assetLoader = assetLoader;
   }
 
-  // Draw image utility
   drawImage(src, x, y, width = null, height = null, clip = {}) {
     const { x: clipX, y: clipY, width: clipWidth, height: clipHeight } = clip;
-    const img = this.loadedImages.get(src);
+    const img = this.assetLoader.img(src);
     if (!img) {
       console.warn(`Image not loaded: ${src}`);
       return;
@@ -39,17 +47,6 @@ class CanvasManager {
     }
   }
 
-  getDrawParams(params = {}) {
-    const result = {
-      ...this.DRAW_PARAMS,
-      ...params,
-    };
-
-    result.filled = !!result.fill;
-
-    return result;
-  }
-
   drawText(text, x, y, options = {}) {
     const {
       color = "#fff",
@@ -60,11 +57,9 @@ class CanvasManager {
     } = options;
 
     if (typeof text === "object") {
+      // MULTILINE
       for (const line of text) {
-        y = this.drawText(line, x, y, {
-          ...options,
-          lineSpacing: lineSpacing,
-        });
+        y = this.drawText(line, x, y, options);
       }
       return y;
     } else {
@@ -73,13 +68,24 @@ class CanvasManager {
       this.ctx.textAlign = align;
       this.ctx.textBaseline = baseline;
       this.ctx.fillText(text, x, y);
-
       return y + lineSpacing;
     }
   }
 
+  getPathDrawParams(params = {}) {
+    const result = {
+      fill: "#fff",
+      stroke: "#000",
+      strokeWidth: 0,
+      ...params,
+    };
+    result.filled = !!result.fill;
+    return result;
+  }
+
   drawRect(x, y, width, height, params = {}) {
-    const { fill, stroke, strokeWidth, filled } = this.getDrawParams(params);
+    const { fill, stroke, strokeWidth, filled } =
+      this.getPathDrawParams(params);
 
     this.ctx.strokeStyle = stroke;
     this.ctx.fillStyle = fill;
@@ -90,7 +96,8 @@ class CanvasManager {
   }
 
   drawPath(path, params = {}) {
-    const { fill, stroke, strokeWidth, filled } = this.getDrawParams(params);
+    const { fill, stroke, strokeWidth, filled } =
+      this.getPathDrawParams(params);
 
     this.ctx.strokeStyle = stroke;
     this.ctx.fillStyle = fill;
@@ -100,16 +107,11 @@ class CanvasManager {
     if (strokeWidth) this.ctx.stroke(path);
   }
 
-  drawCircle(x, y, radius, color = "#fff", filled = true) {
+  drawCircle(x, y, radius, params) {
     this.ctx.beginPath();
     this.ctx.arc(x, y, radius, 0, Math.PI * 2);
-    this.ctx.strokeStyle = color;
-    this.ctx.fillStyle = color;
-
-    if (filled) {
-      this.ctx.fill();
-    } else {
-      this.ctx.stroke();
-    }
+    // While this looks odd, I think the currying is actually correct
+    // This quirk comes from trying to optimize an almost-but-not-really duplicated code block
+    this.drawPath(undefined, params);
   }
 }
