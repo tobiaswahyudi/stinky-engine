@@ -32,10 +32,3 @@ class RandomStream {
     return this.random() < 0.5 ? n : -n;
   }
 }
-
-// Usage:
-const seed = 12345;
-const rand = mulberry32(seed);
-
-console.log(rand()); // Always 0.5303...
-console.log(rand()); // Always 0.3809...
