@@ -33,15 +33,15 @@ body {
 #gameCanvas {
     display: block;
     background-color: #111;
-    cursor: crosshair;
+    cursor: default;
     image-rendering: -moz-crisp-edges;
     image-rendering: -webkit-crisp-edges;
     -ms-interpolation-mode: nearest-neighbor;
     image-rendering: pixelated;
     /* Constrain to 90% of screen */
-    width: 90vw;
-    height: 90vh;
+    /* width: 90vw;
+    height: 90vh; */
     /* Set aspect ratio here */
-    max-width: calc(90vh * 13 / 9);
-    max-height: calc(90vw * 9 / 13);
+    /* max-width: calc(90vh * 13 / 9);
+    max-height: calc(90vw * 9 / 13); */
 }

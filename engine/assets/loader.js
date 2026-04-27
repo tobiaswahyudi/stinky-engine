@@ -2,7 +2,7 @@ const imgAssetMapper = (sprite) => sprite.src ?? sprite;
 
 /**
  * Asset Loader. Loads assets.
- * 
+ *
  * Sample assets parameter:
  * ```
  *  {
@@ -29,14 +29,19 @@ class AssetLoader {
   constructor(assets, onLoaded) {
     this.loadedImages = new Map();
 
-    const imgSrcs = [...new Set(objFlatten(assets.imgSrcs, imgAssetMapper))];
+    const imgSrcs = [...new Set(objFlatten(assets.sprites, imgAssetMapper))];
 
     Promise.all([
       this.preloadImages(imgSrcs),
       this.preloadFonts(assets.fonts),
-    ]).then(onLoaded, (err) => {
-      console.error("Error preloading assets:", err);
-    });
+    ]).then(
+      (res) => {
+        onLoaded(this, res);
+      },
+      (err) => {
+        console.error("Error preloading assets:", err);
+      },
+    );
   }
 
   // Preload multiple images
@@ -55,9 +60,9 @@ class AssetLoader {
 
     try {
       await Promise.all(
-        imgSrcs.map((src) => {
-          preloadImage(src);
-        }),
+        imgSrcs.map((src) =>
+          preloadImage(src).then(() => console.log("Loaded ", src)),
+        ),
       );
       console.log("All images preloaded");
     } catch (error) {
@@ -66,15 +71,37 @@ class AssetLoader {
   }
 
   async preloadFonts(fonts) {
+    // Create new style tag
+    const style = document.createElement("style");
+    const head = document.getElementsByTagName("head")[0];
+    head.appendChild(style);
+
+    // Iterate through all fonts and add to stylesheet
+    const fontImports = fonts.flatMap((fontObj) => {
+      const name = fontObj.name;
+      return fontObj.variants.map(
+        ([weight, style, src]) =>
+          `@font-face {
+    font-family: '${name}';
+    src: url('${src}') format('truetype');
+    font-weight: ${weight};
+    font-style: ${style};`,
+      );
+    });
+
+    style.innerText = fontImports.join("\n\n");
+
+    // Await all fonts being loaded
     try {
       await Promise.all(
-        fonts.map(([fontName, weights]) =>
-          Promise.all(
-            weights.map((weight) =>
-              document.fonts.load(`${weight} 12px ${fontName}`),
-            ),
-          ),
-        ),
+        fonts.flatMap((fontObj) => {
+          const name = fontObj.name;
+          return fontObj.variants.map(([weight, style]) =>
+            document.fonts.load(`${style} ${weight} 12px ${name}`).then(() => {
+              console.log(`Loaded ${style} ${weight} ${name}`);
+            }),
+          );
+        }),
       );
       console.log("All fonts preloaded");
     } catch (error) {

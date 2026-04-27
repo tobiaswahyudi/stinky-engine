@@ -5,30 +5,67 @@
  *  }
  */
 
+const DEFAULT_CONFIG = {
+  width: 1280,
+  height: 720,
+  screenBoundPercent: 90,
+};
+
 class CanvasManager {
   constructor(config, assetLoader) {
+    config = {
+      ...DEFAULT_CONFIG,
+      ...config,
+    };
+
     this.canvas = document.getElementById("gameCanvas");
     this.ctx = this.canvas.getContext("2d");
 
     // Canvas dimensions
-    this.width = GAME_WIDTH;
-    this.height = GAME_HEIGHT;
+    this.width = config.width;
+    this.height = config.height;
     // Set canvas size
     this.canvas.width = this.width;
     this.canvas.height = this.height;
 
+    // Set image smoothing off - needs to happen after canvas resize
+    this.ctx.imageSmoothingEnabled = false;
+    this.ctx.textRendering = "geometricPrecision";
+
+    // Constrain to 90% of screen
+    this.canvas.style.width = `${config.screenBoundPercent}vw`;
+    this.canvas.style.height = `${config.screenBoundPercent}vh`;
+
+    // Constrain to aspect ratio
+    this.canvas.style.maxWidth = `calc(${config.screenBoundPercent}vh * ${config.width} / ${config.height})`;
+    this.canvas.style.maxHeight = `calc(${config.screenBoundPercent}vw * ${config.height} / ${config.width})`;
+
     this.assetLoader = assetLoader;
   }
 
-  drawImage(src, x, y, width = null, height = null, clip = {}) {
-    const { x: clipX, y: clipY, width: clipWidth, height: clipHeight } = clip;
+  clear(color) {
+    if (!color) {
+      this.ctx.clearRect(0, 0, this.width, this.height);
+    } else {
+      this.ctx.fillStyle = color;
+      this.ctx.fillRect(0, 0, this.width, this.height);
+    }
+  }
+
+  drawImage(tgt, x, y, width = null, height = null) {
+    const src = typeof tgt === "object" ? tgt.src : tgt;
     const img = this.assetLoader.img(src);
     if (!img) {
       console.warn(`Image not loaded: ${src}`);
       return;
     }
 
-    if (Object.keys(clip).length > 0) {
+    if (typeof tgt === "object") {
+      const clipX = tgt.c * tgt.x;
+      const clipY = tgt.c * tgt.y;
+      const clipWidth = tgt.c;
+      const clipHeight = tgt.c;
+
       this.ctx.drawImage(
         img,
         clipX,
@@ -63,6 +100,10 @@ class CanvasManager {
       }
       return y;
     } else {
+      const textSplit = text.split("\n");
+      if (textSplit.length > 1) {
+        return this.drawText(textSplit, x, y, options);
+      }
       this.ctx.fillStyle = color;
       this.ctx.font = font;
       this.ctx.textAlign = align;

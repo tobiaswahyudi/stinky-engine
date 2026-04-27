@@ -2,18 +2,34 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> 
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
     <title>Stinky Engine Scaffold</title>
     <link rel="stylesheet" href="style.css" />
-    <!-- <link rel="icon" href="assets/sprite/gobblin.png" /> -->
+    <link rel="icon" href="assets/img/icon.png" />
   </head>
   <body>
     <div id="game-container">
       <canvas id="gameCanvas"></canvas>
     </div>
   </body>
+  <script src="game/game.js"></script>
+  <script src="assets/assets.js"></script>
   <script src="stinky.js"></script>
   <script>
-    MakeGameStinky();
+    MakeGameStinky(
+      {
+        assets: ASSETS,
+        canvas: {
+          width: 1280,
+          height: 720,
+          screenBoundPercent: 95,
+        },
+      },
+      [],
+      startGame,
+    );
   </script>
 </html>
