@@ -101,6 +101,11 @@ async function _initGame(config, initializer, cleanup) {
 
   const sizeFactor = game.canvas.width / 20;
 
+  const FPS = 6;
+  const TIMEOUT = 1000 / FPS;
+  const SPLASH_DURATION = 1600;
+  const RENDER_COUNT = Math.ceil(SPLASH_DURATION / TIMEOUT);
+
   // SPLASH
   const render = () => {
     game.canvas.clear();
@@ -111,8 +116,8 @@ async function _initGame(config, initializer, cleanup) {
 
     game.canvas.drawText(
       "the stinky\ngame engine",
-      game.canvas.width / 2 - centerOffset + 1 * sizeFactor - 2 * ty,
-      game.canvas.height / 2 - sizeFactor - ty / 2,
+      game.canvas.width / 2 - centerOffset + 1 * sizeFactor - 2 * ty + randpm(4),
+      game.canvas.height / 2 - sizeFactor - ty / 2 + randpm(4),
       {
         align: "left",
         font: `${sizeFactor + ty}px Syne Mono`,
@@ -124,15 +129,15 @@ async function _initGame(config, initializer, cleanup) {
 
     game.canvas.drawImage(
       SPRITES.ENGINE.STINKY[renderCount % 3],
-      game.canvas.width / 2 - imgSize - centerOffset - ir / 2 + randpm(2),
-      game.canvas.height / 2 - imgSize / 2 - ir / 2 + randpm(2),
+      game.canvas.width / 2 - imgSize - centerOffset - ir / 2 + randpm(4),
+      game.canvas.height / 2 - imgSize / 2 - ir / 2 + randpm(4),
       imgSize + ir,
       imgSize + ir,
     );
 
     renderCount += 1;
-    if (renderCount >= 30) initializer(game);
-    else setTimeout(render, 50);
+    if (renderCount >= RENDER_COUNT) initializer(game);
+    else setTimeout(render, TIMEOUT);
   };
 
   render();
