@@ -1,6 +1,6 @@
 // This needs to live here, not in the engine
-const Spritesheeter = (src, cellSize) => {
-  return (x, y) => {
+const Spritesheeter = (src, cellSize, rows, cols) => {
+  const sheeter = (x, y) => {
     return {
       src: src,
       c: cellSize,
@@ -8,18 +8,32 @@ const Spritesheeter = (src, cellSize) => {
       y,
     };
   };
-};
 
-const stinkyCatSheet = Spritesheeter("./assets/img/stinky.png", 32);
+  return Array(rows)
+    .fill(0)
+    .map((_, row) =>
+      Array(cols)
+        .fill(0)
+        .map((_, col) => sheeter(col, row)),
+    );
+};
 
 const SPRITES = {
   ENGINE: {
-    STINKY: {
-      0: stinkyCatSheet(0, 0),
-      1: stinkyCatSheet(1, 0),
-      2: stinkyCatSheet(2, 0),
-    },
+    STINKY: Spritesheeter("./assets/img/stinky.png", 32, 1, 3)[0],
   },
+  DUNGEON: Spritesheeter(
+    "./assets/img/kenney_tiny-dungeon/tilemap_packed.png",
+    16,
+    11,
+    12,
+  ),
+  TOWN: Spritesheeter(
+    "./assets/img/kenney_tiny-town/tilemap_packed.png",
+    16,
+    11,
+    12,
+  ),
 };
 
 const FONTS = [
