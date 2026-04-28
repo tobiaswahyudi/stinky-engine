@@ -27,6 +27,7 @@ class Vec2 {
 
   normalize() {
     const len = Math.hypot(this.x, this.y);
+    if(len == 0) return this;
     this.x /= len;
     this.y /= len;
     return this;

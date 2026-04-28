@@ -34,6 +34,14 @@ const SPRITES = {
     11,
     12,
   ),
+  DESERT: {
+    UI: Spritesheeter(
+      "./assets/kenney_desert-shooter-pack_1.0/PNG/Interface/tilemap_packed.png",
+      16,
+      11,
+      18,
+    ),
+  },
 };
 
 const FONTS = [

@@ -8,6 +8,7 @@ var ENGINE_MODULES = [
   "engine/math/vec2.js",
   "engine/state/gameState.js",
   "engine/util/flatten.js",
+  "engine/ui/slicing.js",
 ];
 
 // To start, call MakeGameStinky.

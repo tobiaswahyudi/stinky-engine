@@ -56,19 +56,18 @@ class CanvasManager {
     if (typeof tgt === "object") {
       const clipX = tgt.c * tgt.x;
       const clipY = tgt.c * tgt.y;
-      const clipWidth = tgt.c;
-      const clipHeight = tgt.c;
+      const clipSize = tgt.c;
 
       this.ctx.drawImage(
         img,
         clipX,
         clipY,
-        clipWidth,
-        clipHeight,
+        clipSize,
+        clipSize,
         x,
         y,
-        width,
-        height,
+        width || clipSize,
+        height || clipSize,
       );
     } else if (width && height) {
       this.ctx.drawImage(img, x, y, width, height);

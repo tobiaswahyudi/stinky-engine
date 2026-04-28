@@ -3,6 +3,8 @@ function startGame(game) {
 
   let renderCount = 0;
 
+  const nineslice = new NineSlice(canvas, ASSETS.sprites.DESERT.UI, 0, 9, 4);
+
   const renderLoop = () => {
     canvas.clear("#4483e2");
     ctx.save();
@@ -15,6 +17,14 @@ function startGame(game) {
     ctx.restore();
 
     renderCount++;
+
+    nineslice.draw(
+      canvas.width / 2,
+      (canvas.height * 2) / 3,
+      150 + Math.sin(renderCount * 0.05) * 20,
+      160 + Math.sin(renderCount * 0.07) * 30,
+      ALIGN.Center,
+    );
 
     setTimeout(renderLoop, 1000 / 60);
   };
