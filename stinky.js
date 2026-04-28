@@ -86,6 +86,7 @@ var game = {
 async function _initGame(config, initializer, cleanup) {
   game.config = config;
 
+  // Initialize all the components and stuff
   const assetLoader = await new Promise((resolve) => {
     new AssetLoader(config.assets, resolve);
   });
@@ -98,34 +99,39 @@ async function _initGame(config, initializer, cleanup) {
 
   cleanup();
 
-  const sizeFactor = game.canvas.width / 24;
+  const sizeFactor = game.canvas.width / 20;
 
+  // SPLASH
   const render = () => {
     game.canvas.clear();
     const imgSize = 2 * sizeFactor;
     const centerOffset = 3 * sizeFactor;
 
+    const ty = randpm(3);
+
     game.canvas.drawText(
       "the stinky\ngame engine",
-      game.canvas.width / 2 - centerOffset + 1 * sizeFactor,
-      game.canvas.height / 2 - sizeFactor,
+      game.canvas.width / 2 - centerOffset + 1 * sizeFactor - 2 * ty,
+      game.canvas.height / 2 - sizeFactor - ty / 2,
       {
         align: "left",
-        font: `${sizeFactor}px Syne Mono`,
+        font: `${sizeFactor + ty}px Syne Mono`,
         lineSpacing: sizeFactor,
       },
     );
 
+    const ir = randpm(6);
+
     game.canvas.drawImage(
-      SPRITES.ENGINE.STINKY[(renderCount % 3) + 1],
-      game.canvas.width / 2 - imgSize - centerOffset,
-      game.canvas.height / 2 - imgSize / 2,
-      imgSize,
-      imgSize,
+      SPRITES.ENGINE.STINKY[renderCount % 3],
+      game.canvas.width / 2 - imgSize - centerOffset - ir / 2 + randpm(2),
+      game.canvas.height / 2 - imgSize / 2 - ir / 2 + randpm(2),
+      imgSize + ir,
+      imgSize + ir,
     );
 
     renderCount += 1;
-    if (renderCount >= 20) initializer(game);
+    if (renderCount >= 30) initializer(game);
     else setTimeout(render, 50);
   };
 

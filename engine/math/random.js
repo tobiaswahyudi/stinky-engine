@@ -32,3 +32,7 @@ class RandomStream {
     return this.random() < 0.5 ? n : -n;
   }
 }
+
+const randpm = (v = 1) => {
+  return (Math.random() * 2 - 1) * v;
+};
