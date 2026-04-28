@@ -47,7 +47,15 @@ const FONTS = [
   },
 ];
 
+const SOUNDS = {
+  SELECT: "./assets/kenney_desert-shooter-pack_1.0/sound/select-a.ogg",
+  COIN: "./assets/kenney_desert-shooter-pack_1.0/sound/coin-a.ogg",
+  MOVE: "./assets/kenney_desert-shooter-pack_1.0/sound/move-c.ogg",
+  MENU_BGM: "./assets/music/skyetunes 1-23-2018 - 1.mp3",
+};
+
 const ASSETS = {
   sprites: SPRITES,
   fonts: FONTS,
+  sounds: SOUNDS,
 };

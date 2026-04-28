@@ -1,18 +1,11 @@
-/**
- *  config: {
- *    width: 1280,
- *    height: 720
- *  }
- */
-
-const DEFAULT_CONFIG = {
-  width: 1280,
-  height: 720,
-  screenBoundPercent: 90,
-};
-
 class CanvasManager {
   constructor(config, assetLoader) {
+    const DEFAULT_CONFIG = {
+      width: 1280,
+      height: 720,
+      screenBoundPercent: 90,
+    };
+
     config = {
       ...DEFAULT_CONFIG,
       ...config,

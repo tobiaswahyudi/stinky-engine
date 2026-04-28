@@ -1,7 +1,20 @@
+var ENGINE_MODULES = [
+  "engine/assets/loader.js",
+  "engine/math/types.js",
+  "engine/render/canvas.js",
+  "engine/audio/webaudio.js",
+  "engine/util/constants.js",
+  "engine/math/random.js",
+  "engine/math/vec2.js",
+  "engine/state/gameState.js",
+  "engine/util/flatten.js",
+];
+
 // To start, call MakeGameStinky.
 function MakeGameStinky(config, modules = [], initializer = () => {}) {
   const loadingText = document.createElement("span");
   loadingText.style.color = "white";
+  const startButton = document.createElement("button");
   const body = document.getElementsByTagName("body")[0];
 
   let error = null;
@@ -12,9 +25,15 @@ function MakeGameStinky(config, modules = [], initializer = () => {}) {
 
   // hide all body children
   body.prepend(loadingText);
+  startButton.innerText = "Boot";
+  startButton.style.padding = '1rem';
+  startButton.style.marginTop = '1rem';
+  startButton.disabled = true;
+  loadingText.after(startButton);
 
   const cleanup = () => {
     loadingText.remove();
+    startButton.remove();
     [...body.children].forEach(
       (v, idx) => (v.style.display = bodyChildrenDisplays[idx]),
     );
@@ -34,8 +53,10 @@ function MakeGameStinky(config, modules = [], initializer = () => {}) {
       0,
     );
     loadingText.innerText = `Loading modules (${loadedCount}/${allModules.length})`;
-    if (loadedCount == allModules.length)
-      _initGame(config, initializer, cleanup);
+    if (loadedCount == allModules.length) {
+      startButton.disabled = false;
+      startButton.onclick = () => _initGame(config, initializer, cleanup);
+    }
   };
 
   allModules.forEach((module) => {
@@ -53,17 +74,6 @@ function MakeGameStinky(config, modules = [], initializer = () => {}) {
   });
 }
 
-var ENGINE_MODULES = [
-  "engine/assets/loader.js",
-  "engine/math/types.js",
-  "engine/render/canvas.js",
-  "engine/util/constants.js",
-  "engine/math/random.js",
-  "engine/math/vec2.js",
-  "engine/state/gameState.js",
-  "engine/util/flatten.js",
-];
-
 function loadScript(src) {
   const script = document.createElement("script");
   script.src = src;
@@ -79,6 +89,7 @@ function loadScript(src) {
 var game = {
   assetLoader: null,
   canvas: null,
+  audio: null,
   ctx: null,
   config: null,
 };
@@ -93,6 +104,7 @@ async function _initGame(config, initializer, cleanup) {
 
   game.assetLoader = assetLoader;
   game.canvas = new CanvasManager(config.canvas, assetLoader);
+  game.audio = new WebAudioManager({}, assetLoader);
   game.ctx = game.canvas.ctx;
 
   let renderCount = 0;
@@ -103,7 +115,7 @@ async function _initGame(config, initializer, cleanup) {
 
   const FPS = 6;
   const TIMEOUT = 1000 / FPS;
-  const SPLASH_DURATION = 1600;
+  const SPLASH_DURATION = 1500;
   const RENDER_COUNT = Math.ceil(SPLASH_DURATION / TIMEOUT);
 
   // SPLASH
@@ -116,7 +128,11 @@ async function _initGame(config, initializer, cleanup) {
 
     game.canvas.drawText(
       "the stinky\ngame engine",
-      game.canvas.width / 2 - centerOffset + 1 * sizeFactor - 2 * ty + randpm(4),
+      game.canvas.width / 2 -
+        centerOffset +
+        1 * sizeFactor -
+        2 * ty +
+        randpm(4),
       game.canvas.height / 2 - sizeFactor - ty / 2 + randpm(4),
       {
         align: "left",

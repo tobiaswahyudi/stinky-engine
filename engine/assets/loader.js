@@ -28,12 +28,20 @@ const imgAssetMapper = (sprite) => sprite.src ?? sprite;
 class AssetLoader {
   constructor(assets, onLoaded) {
     this.loadedImages = new Map();
+    this.loadedTracks = new Map();
+
+    // Actually created here, because we need to initialize tracks with it.
+    // Ownership "passed" to webaudiomanager later
+    // Bad oop? yeah, whatcha gonna do about it huh?
+    this.audioContext = new AudioContext();
 
     const imgSrcs = [...new Set(objFlatten(assets.sprites, imgAssetMapper))];
+    const soundSrcs = objFlatten(assets.sounds);
 
     Promise.all([
       this.preloadImages(imgSrcs),
       this.preloadFonts(assets.fonts),
+      this.preloadTracks(soundSrcs),
     ]).then(
       (res) => {
         onLoaded(this, res);
@@ -61,12 +69,39 @@ class AssetLoader {
     try {
       await Promise.all(
         imgSrcs.map((src) =>
-          preloadImage(src).then(() => console.log("Loaded ", src)),
+          preloadImage(src).then(() => console.log("Loaded image ", src)),
         ),
       );
       console.log("All images preloaded");
     } catch (error) {
       console.error("Error preloading images:", error);
+      return Promise.reject(error);
+    }
+  }
+
+  // Preload multiple tracks
+  async preloadTracks(sfxSrcs) {
+    const preloadTrack = (src) => {
+      // const ae = new Audio();
+      // ae.src = src;
+      const ae = document.createElement("audio");
+      ae.src = src;
+      const track = this.audioContext.createMediaElementSource(ae);
+      this.loadedTracks.set(src, { track, element: ae });
+      return track;
+    };
+
+    try {
+      const res = sfxSrcs.map((src) => {
+        const res = preloadTrack(src);
+        console.log("Loaded track ", src);
+        return res;
+      });
+      console.log("All tracks preloaded");
+      return Promise.resolve(res);
+    } catch (error) {
+      console.error("Error preloading tracks:", error);
+      return Promise.reject(error);
     }
   }
 
@@ -106,7 +141,12 @@ class AssetLoader {
       console.log("All fonts preloaded");
     } catch (error) {
       console.error("Error preloading fonts:", error);
+      return Promise.reject(error);
     }
+  }
+
+  track(trackSrc) {
+    return this.loadedTracks.get(trackSrc);
   }
 
   img(imgSrc) {
