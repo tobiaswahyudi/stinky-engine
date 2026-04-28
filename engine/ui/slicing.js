@@ -130,14 +130,6 @@ class ThreeSlice {
     const leftAlignment = align % 3;
     const topAlignment = Math.floor(align / 3);
 
-    console.log(
-      align,
-      leftAlignment,
-      topAlignment,
-      -leftAlignment / 2,
-      -topAlignment / 2,
-    );
-
     const offsetVec = new Vec2(1 - leftAlignment, 1 - topAlignment)
       .normalize()
       .scale(offset);
