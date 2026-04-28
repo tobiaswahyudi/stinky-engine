@@ -11,12 +11,23 @@ var ENGINE_MODULES = [
   "engine/ui/slicing.js",
 ];
 
+const DEFAULT_CONFIG = {
+  splash: {
+    duration: 1500
+  }
+}
+
 // To start, call MakeGameStinky.
-function MakeGameStinky(config, modules = [], initializer = () => {}) {
+function MakeGameStinky(config = {}, modules = [], initializer = () => {}) {
   const loadingText = document.createElement("span");
   loadingText.style.color = "white";
   const startButton = document.createElement("button");
   const body = document.getElementsByTagName("body")[0];
+
+  config = {
+    ...DEFAULT_CONFIG,
+    ...config
+  }
 
   let error = null;
 
@@ -114,9 +125,9 @@ async function _initGame(config, initializer, cleanup) {
 
   const sizeFactor = game.canvas.width / 20;
 
-  const FPS = 6;
+  const FPS = 8;
   const TIMEOUT = 1000 / FPS;
-  const SPLASH_DURATION = 1500;
+  const SPLASH_DURATION = config.splash.duration || 1500;
   const RENDER_COUNT = Math.ceil(SPLASH_DURATION / TIMEOUT);
 
   // SPLASH
@@ -137,7 +148,7 @@ async function _initGame(config, initializer, cleanup) {
       game.canvas.height / 2 - sizeFactor - ty / 2 + randpm(4),
       {
         align: "left",
-        font: `${sizeFactor + ty}px Syne Mono`,
+        font: `${sizeFactor + ty}px sans-serif`,
         lineSpacing: sizeFactor,
       },
     );
