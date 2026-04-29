@@ -22,17 +22,18 @@ class WebAudioManager {
     this.bgmPlaying = true;
 
     canvas.addEventListener("click", () => {
-      console.log("WOAH");
       // Check if context is in suspended state (autoplay policy)
       if (this.ctx.state === "suspended") {
         this.ctx.resume();
         return;
       }
-
+      
       // Play or pause track depending on state
       if (!this.bgmPlaying) {
+        console.log("[WA] Play music");
         bgmAudio.play();
       } else {
+        console.log("[WA] Pause music");
         bgmAudio.pause();
       }
       this.bgmPlaying = !this.bgmPlaying;

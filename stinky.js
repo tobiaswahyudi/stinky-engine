@@ -7,18 +7,32 @@ var ENGINE_MODULES = [
   "engine/render/canvas.js",
   "engine/audio/webaudio.js",
   "engine/util/constants.js",
+  "engine/math/utils.js",
   "engine/math/vec2.js",
   "engine/math/geometry/rect2d.js",
   "engine/state/gameState.js",
   "engine/util/flatten.js",
+  "engine/ui/align.js",
   "engine/ui/slicing.js",
+  "engine/ui/button.js",
+  "engine/ui/manager.js",
 ];
+
+// Hoist me captain
+var game = {
+  assetLoader: null,
+  canvas: null,
+  audio: null,
+  ctx: null,
+  config: null,
+  ui: null,
+};
 
 const DEFAULT_CONFIG = {
   splash: {
-    duration: 1500
-  }
-}
+    duration: 1500,
+  },
+};
 
 // To start, call MakeGameStinky.
 function MakeGameStinky(config = {}, modules = [], initializer = () => {}) {
@@ -29,8 +43,8 @@ function MakeGameStinky(config = {}, modules = [], initializer = () => {}) {
 
   config = {
     ...DEFAULT_CONFIG,
-    ...config
-  }
+    ...config,
+  };
 
   let error = null;
 
@@ -41,8 +55,8 @@ function MakeGameStinky(config = {}, modules = [], initializer = () => {}) {
   // hide all body children
   body.prepend(loadingText);
   startButton.innerText = "Boot";
-  startButton.style.padding = '1rem';
-  startButton.style.marginTop = '1rem';
+  startButton.style.padding = "1rem";
+  startButton.style.marginTop = "1rem";
   startButton.disabled = true;
   loadingText.after(startButton);
 
@@ -69,7 +83,7 @@ function MakeGameStinky(config = {}, modules = [], initializer = () => {}) {
     );
     loadingText.innerText = `Loading modules (${loadedCount}/${allModules.length})`;
     if (loadedCount == allModules.length) {
-      console.log(`[0] Done loading modules!`)
+      console.log(`[0] Done loading modules!`);
       startButton.disabled = false;
       startButton.onclick = () => _initGame(config, initializer, cleanup);
     }
@@ -101,15 +115,6 @@ function loadScript(src) {
   return promise;
 }
 
-// Hoist me captain
-var game = {
-  assetLoader: null,
-  canvas: null,
-  audio: null,
-  ctx: null,
-  config: null,
-};
-
 async function _initGame(config, initializer, cleanup) {
   game.config = config;
 
@@ -122,6 +127,8 @@ async function _initGame(config, initializer, cleanup) {
   game.canvas = new CanvasManager(config.canvas, assetLoader);
   game.audio = new WebAudioManager({}, assetLoader);
   game.ctx = game.canvas.ctx;
+
+  game.ui = new UIManager(game.canvas);
 
   let renderCount = 0;
 

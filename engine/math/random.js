@@ -7,6 +7,17 @@ function random32Bit() {
   return Math.floor(Math.random() * 0xffffffff);
 }
 
+function randomHash() {
+  // Crude but yknow what its fine.
+  return Math.floor(Math.random() * 0xffffffff)
+    .toString(16)
+    .padStart(8, "0");
+}
+
+function randomChoice(choices) {
+    return choices[Math.floor(Math.random() * choices.length)];
+  }
+
 class RandomStream {
   constructor(seed) {
     this.seed = seed;

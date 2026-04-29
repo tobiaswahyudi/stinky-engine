@@ -34,6 +34,19 @@ class CanvasManager {
     this.canvas.style.maxHeight = `calc(${config.screenBoundPercent}vw * ${config.height} / ${config.width})`;
 
     this.assetLoader = assetLoader;
+
+    this.actualWidth = 0;
+    this.actualHeight = 0;
+
+    const fetchClientSize = () => {
+      const size = this.canvas.getBoundingClientRect();
+
+      this.actualWidth = size.width;
+      this.actualHeight = size.height;
+    };
+
+    setTimeout(fetchClientSize, 0);
+    window.onresize = fetchClientSize;
   }
 
   clear(color) {
@@ -146,5 +159,12 @@ class CanvasManager {
     // While this looks odd, I think the currying is actually correct
     // This quirk comes from trying to optimize an almost-but-not-really duplicated code block
     this.drawPath(undefined, params);
+  }
+
+  screenToWorldSpace(x, y) {
+    return new Vec2(
+      lerp(0, this.width, x / this.actualWidth),
+      lerp(0, this.height, y / this.actualHeight),
+    );
   }
 }
