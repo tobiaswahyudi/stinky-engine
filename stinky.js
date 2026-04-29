@@ -6,6 +6,7 @@ var ENGINE_MODULES = [
   "engine/util/constants.js",
   "engine/math/random.js",
   "engine/math/vec2.js",
+  "engine/math/geometry/rect2d.js",
   "engine/state/gameState.js",
   "engine/util/flatten.js",
   "engine/ui/slicing.js",

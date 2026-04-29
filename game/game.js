@@ -19,32 +19,66 @@ function startGame(game) {
 
     renderCount++;
 
-    nineslice.draw(
+    let rect;
+    let coord;
+    rect = nineslice.draw(
       canvas.width / 2,
       (canvas.height * 2) / 3,
-      150 + Math.sin(renderCount * 0.05) * 20,
+      240 + Math.sin(renderCount * 0.05) * 40,
       160 + Math.sin(renderCount * 0.07) * 30,
       ALIGN.Center,
     );
-
-    threeslice.draw(
-      100,
-      canvas.height / 2 - 100,
-      150 + Math.sin(renderCount * 0.05) * 20,
+    coord = rect.topLeft;
+    canvas.drawText("Left Aligned\ntext on\ncenter aligned\nbox", coord.x + 32, coord.y + 32, {
+      align: "left",
+      font: `bold 18px sans-serif`,
+    });
+    rect = nineslice.draw(
+      canvas.width * 2 / 3,
+      (canvas.height * 2) / 3,
+      240 + Math.sin(renderCount * 0.08) * 40,
+      160 + Math.sin(renderCount * 0.09) * 30,
       ALIGN.Left,
     );
-    threeslice.draw(
-      200,
+    coord = rect.top;
+    canvas.drawText("Center Aligned\ntext on\nleft aligned\nbox", coord.x, coord.y + 32, {
+      align: "center",
+      font: `bold 18px sans-serif`,
+    });
+
+    rect = threeslice.draw(
+      100,
+      canvas.height / 2 - 100,
+      200 + Math.sin(renderCount * 0.05) * 20,
+      ALIGN.Left,
+    );
+    coord = rect.center;
+    canvas.drawText("Left Aligned", coord.x, coord.y - 10, {
+      align: "center",
+      font: `bold 18px sans-serif`,
+    });
+    rect = threeslice.draw(
+      250,
       canvas.height / 2,
-      150 + Math.sin(renderCount * 0.05) * 20,
+      200 + Math.sin(renderCount * 0.05) * 20,
       ALIGN.Center,
     );
-    threeslice.draw(
-      300,
+    coord = rect.center;
+    canvas.drawText("Center Aligned", coord.x, coord.y - 10, {
+      align: "center",
+      font: `bold 18px sans-serif`,
+    });
+    rect = threeslice.draw(
+      400,
       canvas.height / 2 + 100,
-      150 + Math.sin(renderCount * 0.05) * 20,
+      200 + Math.sin(renderCount * 0.05) * 20,
       ALIGN.Right,
     );
+    coord = rect.center;
+    canvas.drawText("Right Aligned", coord.x, coord.y - 10, {
+      align: "center",
+      font: `bold 18px sans-serif`,
+    });
 
     setTimeout(renderLoop, 1000 / 60);
   };
