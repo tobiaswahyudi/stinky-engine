@@ -69,10 +69,10 @@ class AssetLoader {
     try {
       await Promise.all(
         imgSrcs.map((src) =>
-          preloadImage(src).then(() => console.log("Loaded image ", src)),
+          preloadImage(src).then(() => console.log("[AL] Loaded image ", src)),
         ),
       );
-      console.log("All images preloaded");
+      console.log("[AL] All images preloaded");
     } catch (error) {
       console.error("Error preloading images:", error);
       return Promise.reject(error);
@@ -94,10 +94,10 @@ class AssetLoader {
     try {
       const res = sfxSrcs.map((src) => {
         const res = preloadTrack(src);
-        console.log("Loaded track ", src);
+        console.log("[AL] Loaded track ", src);
         return res;
       });
-      console.log("All tracks preloaded");
+      console.log("[AL] All tracks preloaded");
       return Promise.resolve(res);
     } catch (error) {
       console.error("Error preloading tracks:", error);
@@ -133,12 +133,12 @@ class AssetLoader {
           const name = fontObj.name;
           return fontObj.variants.map(([weight, style]) =>
             document.fonts.load(`${style} ${weight} 12px ${name}`).then(() => {
-              console.log(`Loaded ${style} ${weight} ${name}`);
+              console.log(`[AL] Loaded ${style} ${weight} ${name}`);
             }),
           );
         }),
       );
-      console.log("All fonts preloaded");
+      console.log("[AL] All fonts preloaded");
     } catch (error) {
       console.error("Error preloading fonts:", error);
       return Promise.reject(error);

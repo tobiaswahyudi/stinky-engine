@@ -1,10 +1,12 @@
 var ENGINE_MODULES = [
+  // Most of these are dynamic, or has no dependencies.
+  // yippee JS, it should be fine to load these in whatever order
+  "engine/math/random.js",
   "engine/assets/loader.js",
   "engine/math/types.js",
   "engine/render/canvas.js",
   "engine/audio/webaudio.js",
   "engine/util/constants.js",
-  "engine/math/random.js",
   "engine/math/vec2.js",
   "engine/math/geometry/rect2d.js",
   "engine/state/gameState.js",
@@ -67,6 +69,7 @@ function MakeGameStinky(config = {}, modules = [], initializer = () => {}) {
     );
     loadingText.innerText = `Loading modules (${loadedCount}/${allModules.length})`;
     if (loadedCount == allModules.length) {
+      console.log(`[0] Done loading modules!`)
       startButton.disabled = false;
       startButton.onclick = () => _initGame(config, initializer, cleanup);
     }
@@ -76,7 +79,7 @@ function MakeGameStinky(config = {}, modules = [], initializer = () => {}) {
     loadScript(module).then(
       () => {
         loadedScripts.set(module, true);
-        console.log("Loaded module: " + module);
+        console.log("[0] Loaded module: " + module);
         updateLoading();
       },
       () => {
